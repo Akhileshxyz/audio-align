@@ -10,26 +10,34 @@ export default async function handler(req, res) {
     const { accessToken } = req.body;
     
     try {
-        // Get liked songs
+        // CORRECTED: Fetch liked songs
         const likedResponse = await fetch('https://api.spotify.com/v1/me/tracks?limit=50', {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         const likedSongs = await likedResponse.json();
         
-        // Get audio features for each track
         const trackIds = likedSongs.items.map(item => item.track.id).join(',');
         
+        // CORRECTED: Fetch audio features for each track
         const featuresResponse = await fetch(`https://api.spotify.com/v1/audio-features?ids=${trackIds}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
         const audioFeatures = await featuresResponse.json();
         
+        // Also fetch top artists to improve recommendations
+        const topArtistsResponse = await fetch('https://api.spotify.com/v1/me/top/artists?limit=10', {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const topArtists = await topArtistsResponse.json();
+
         res.json({
             tracks: likedSongs.items,
-            audioFeatures: audioFeatures.audio_features
+            audioFeatures: audioFeatures.audio_features,
+            topArtists: topArtists.items
         });
         
     } catch (error) {
+        console.error("Fetch music error:", error)
         res.status(500).json({ error: 'Failed to fetch music data' });
     }
 }
