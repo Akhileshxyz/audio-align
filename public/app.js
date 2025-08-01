@@ -1,9 +1,11 @@
+// public/app.js
 class AudioAlign {
     constructor() {
-        // Replace with your actual deployment URLs
-        this.API_BASE = 'https://audio-align.vercel.app/api';
+        // Use relative path for API calls
+        this.API_BASE = '/api'; 
         this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312'; // This one can be public
-        this.REDIRECT_URI = 'https://akhileshxyz.github.io/audio-align/';
+        // Redirect URI should match your Vercel deployment or local dev URL
+        this.REDIRECT_URI = window.location.origin + window.location.pathname; 
         this.init();
     }
     
@@ -16,6 +18,7 @@ class AudioAlign {
     login() {
         const SCOPES = 'user-library-read playlist-read-private user-top-read';
         
+        // CORRECTED SPOTIFY AUTH URL
         const authUrl = `https://accounts.spotify.com/authorize?` +
             `client_id=${this.SPOTIFY_CLIENT_ID}&` +
             `response_type=code&` +
@@ -30,7 +33,6 @@ class AudioAlign {
         const code = urlParams.get('code');
         
         if (code) {
-            // Clean URL
             window.history.replaceState({}, document.title, window.location.pathname);
             await this.processSpotifyCallback(code);
         }
@@ -40,7 +42,6 @@ class AudioAlign {
         try {
             this.showLoading('Connecting to Spotify...');
             
-            // Exchange code for token
             const tokenResponse = await fetch(`${this.API_BASE}/spotify-auth`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -52,7 +53,6 @@ class AudioAlign {
             
             this.showLoading('Fetching your music data...');
             
-            // Fetch music data
             const musicResponse = await fetch(`${this.API_BASE}/fetch-music`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -64,7 +64,6 @@ class AudioAlign {
             
             this.showLoading('Analyzing your musical taste...');
             
-            // Analyze with AI
             const analysisResponse = await fetch(`${this.API_BASE}/analyze-music`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -76,7 +75,6 @@ class AudioAlign {
             
             this.showLoading('Getting personalized recommendations...');
             
-            // Get recommendations
             const recsResponse = await fetch(`${this.API_BASE}/get-recommendations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -89,7 +87,6 @@ class AudioAlign {
             
             const recommendations = recsResponse.ok ? await recsResponse.json() : null;
             
-            // Store results
             const profile = {
                 analysis,
                 recommendations: recommendations?.recommendations || [],
@@ -109,7 +106,6 @@ class AudioAlign {
         const stored = localStorage.getItem('audioAlignProfile');
         if (stored) {
             const profile = JSON.parse(stored);
-            // Show if less than 24 hours old
             if (Date.now() - profile.timestamp < 24 * 60 * 60 * 1000) {
                 this.displayResults(profile);
             }
@@ -130,7 +126,6 @@ class AudioAlign {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         
-        // Display profile analysis
         document.getElementById('profile-results').innerHTML = `
             <div class="profile-card">
                 <h2>🎵 Your Musical DNA</h2>
@@ -140,7 +135,6 @@ class AudioAlign {
             </div>
         `;
         
-        // Display recommendations
         if (profile.recommendations && profile.recommendations.length > 0) {
             const recsHtml = profile.recommendations.map(track => `
                 <div class="recommendation-item">
@@ -152,6 +146,7 @@ class AudioAlign {
             `).join('');
             
             document.getElementById('recommendations-list').innerHTML = recsHtml;
+            document.getElementById('recommendations-section').style.display = 'block';
         } else {
             document.getElementById('recommendations-section').style.display = 'none';
         }
@@ -164,7 +159,6 @@ class AudioAlign {
     }
 }
 
-// Initialize app when page loads
 window.addEventListener('DOMContentLoaded', () => {
     new AudioAlign();
 });
