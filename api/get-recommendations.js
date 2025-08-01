@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     try {
         const seed_artists = topArtists.slice(0, 2).map(artist => artist.id).join(',');
         const seed_tracks = audioFeatures.slice(0, 3).map(feature => feature.id).join(',');
-        
+
         const recommendationsResponse = await fetch(`https://api.spotify.com/v1/recommendations?limit=20&seed_artists=${seed_artists}&seed_tracks=${seed_tracks}`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         });
