@@ -1,1 +1,34 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Align - Discover Your Musical DNA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>🎵 Audio Align</h1>
+            <p>Discover your musical DNA through AI analysis</p>
+        </header>
+        
+        <div id="login-section">
+            <button id="spotify-login" class="spotify-btn">
+                🎵 Connect with Spotify
+            </button>
+            <p class="subtitle">Analyze your liked songs and playlists</p>
+        </div>
+        
+        <div id="analysis-section" style="display:none;">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Analyzing your music taste...</p>
+            </div>
+            <div id="results" style="display:none;"></div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
