@@ -1,11 +1,9 @@
 // public/app.js
 class AudioAlign {
     constructor() {
-        // Use relative path for API calls
-        this.API_BASE = '/api'; 
-        this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312'; // This one can be public
-        // Redirect URI should match your Vercel deployment or local dev URL
-        this.REDIRECT_URI = window.location.origin + window.location.pathname; 
+        this.API_BASE = '/api'; // Use relative path for API calls
+        this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312';
+        this.REDIRECT_URI = window.location.origin + window.location.pathname;
         this.init();
     }
     
@@ -18,7 +16,6 @@ class AudioAlign {
     login() {
         const SCOPES = 'user-library-read playlist-read-private user-top-read';
         
-        // CORRECTED SPOTIFY AUTH URL
         const authUrl = `https://accounts.spotify.com/authorize?` +
             `client_id=${this.SPOTIFY_CLIENT_ID}&` +
             `response_type=code&` +
@@ -117,7 +114,7 @@ class AudioAlign {
         document.getElementById('analysis-section').style.display = 'block';
         document.getElementById('loading').style.display = 'block';
         document.getElementById('results').style.display = 'none';
-        document.getElementById('loading-text').textContent = message;
+        document.querySelector('#loading p').textContent = message;
     }
     
     displayResults(profile) {
@@ -153,9 +150,10 @@ class AudioAlign {
     }
     
     showError(message) {
-        document.getElementById('analysis-section').style.display = 'none';
-        document.getElementById('error-section').style.display = 'block';
-        document.getElementById('error-message').textContent = message;
+        document.getElementById('loading').style.display = 'none';
+        const errorSection = document.getElementById('error-section');
+        errorSection.style.display = 'block';
+        errorSection.textContent = message;
     }
 }
 
