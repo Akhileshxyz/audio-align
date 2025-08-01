@@ -5,37 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audio Align - Discover Your Musical DNA</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
         <header>
-            <h1>🎵 Audio Align</h1>
-            <p>Discover your musical DNA through AI analysis</p>
+            <h1 class="main-title">🎵 Audio Align</h1>
+            <p class="subtitle">Discover your musical DNA through AI-powered analysis of your Spotify library.</p>
         </header>
-        
-        <div id="login-section">
-            <button id="spotify-login" class="spotify-btn">
-                🎵 Connect with Spotify
-            </button>
-            <p class="subtitle">Analyze your liked songs and playlists</p>
-        </div>
-        
-        <div id="analysis-section" style="display:none;">
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>Analyzing your music taste...</p>
+
+        <main>
+            <div id="login-section">
+                <button id="spotify-login" class="spotify-btn">
+                    Connect with Spotify
+                </button>
+                <p class="small-text">We'll analyze your liked songs to create a musical profile.</p>
             </div>
-            <div id="results" style="display:none;">
-                <div id="profile-results"></div>
-                <div id="recommendations-section" style="display:none;">
-                    <h2>Recommended for You</h2>
-                    <div id="recommendations-list"></div>
+
+            <div id="analysis-section" style="display:none;">
+                <div id="loading" class="loading-container">
+                    <div class="spinner"></div>
+                    <p id="loading-message">Analyzing your music taste...</p>
                 </div>
+                <div id="results" style="display:none;">
+                    <div id="profile-results" class="results-card"></div>
+                    <div id="recommendations-section" style="display:none;">
+                        <h2>Recommended For You</h2>
+                        <div id="recommendations-list" class="recommendations-grid"></div>
+                    </div>
+                </div>
+                <div id="error-section" class="error-card" style="display:none;"></div>
+                 <button id="start-over-btn" class="spotify-btn" style="display:none; margin-top: 2rem;">Analyze Again</button>
             </div>
-            <div id="error-section" class="error-section" style="display:none;"></div>
-        </div>
+        </main>
     </div>
-    
+
     <script src="app.js"></script>
 </body>
 </html>
