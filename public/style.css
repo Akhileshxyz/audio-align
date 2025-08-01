@@ -1,3 +1,12 @@
+/* General Styles */
+:root {
+    --spotify-green: #1DB954;
+    --spotify-black: #191414;
+    --light-grey: #282828;
+    --text-color: #FFFFFF;
+    --subtle-grey: #B3B3B3;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,117 +14,193 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1DB954, #191414);
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--light-grey), var(--spotify-black));
     min-height: 100vh;
-    color: white;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
 }
 
 #app {
+    width: 100%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 2rem auto;
     padding: 2rem;
     text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Header */
 header {
     margin-bottom: 3rem;
 }
 
-h1 {
+.main-title {
     font-size: 3rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(45deg, #1DB954, #1ed760);
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, var(--spotify-green), #1ed760);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--subtle-grey);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Login Button */
 .spotify-btn {
-    background: #1DB954;
-    color: white;
+    background: var(--spotify-green);
+    color: var(--text-color);
     border: none;
-    padding: 1rem 2rem;
+    padding: 1rem 2.5rem;
     font-size: 1.2rem;
+    font-weight: 700;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
     margin: 1rem 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .spotify-btn:hover {
     background: #1ed760;
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.05);
     box-shadow: 0 10px 20px rgba(29, 185, 84, 0.3);
 }
 
-.loading {
-    text-align: center;
+.small-text {
+    color: var(--subtle-grey);
+    opacity: 0.8;
+    margin-top: 1rem;
+}
+
+/* Loading Spinner */
+.loading-container {
     padding: 2rem;
 }
 
 .spinner {
     width: 50px;
     height: 50px;
-    border: 4px solid rgba(255,255,255,0.3);
+    border: 5px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    border-top-color: #1DB954;
+    border-top-color: var(--spotify-green);
     animation: spin 1s ease-in-out infinite;
-    margin: 0 auto 1rem;
+    margin: 0 auto 1.5rem;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
 
+#loading-message {
+    font-size: 1.2rem;
+    color: var(--subtle-grey);
+}
+
+/* Results */
 #results {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-top: 2rem;
     text-align: left;
 }
 
-.profile-card {
-    background: rgba(255,255,255,0.05);
+.results-card {
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
-    padding: 1.5rem;
+    padding: 2rem;
     margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.results-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--spotify-green);
+}
+
+.analysis-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+/* Recommendations */
+#recommendations-section h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--spotify-green);
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
 }
 
 .recommendation-item {
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
     padding: 1rem;
-    margin: 0.5rem 0;
     display: flex;
     align-items: center;
-}
-
-.recommendation-item:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateX(5px);
+    gap: 1rem;
     transition: all 0.3s ease;
 }
 
-#error-section {
-    background: rgba(255,0,0,0.1);
+.recommendation-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.recommendation-item img {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+}
+
+.track-info strong {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.track-info span {
+    color: var(--subtle-grey);
+}
+
+/* Error */
+.error-card {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
     border-radius: 15px;
     padding: 2rem;
-    border: 1px solid rgba(255,0,0,0.3);
+    color: #ffcdd2;
 }
 
-.subtitle {
-    opacity: 0.8;
-    margin-top: 1rem;
-}
-
+/* Responsive */
 @media (max-width: 600px) {
     #app {
         padding: 1rem;
+        margin-top: 1rem;
     }
-    
-    h1 {
-        font-size: 2rem;
+    .main-title {
+        font-size: 2.2rem;
+    }
+    .subtitle {
+        font-size: 1rem;
+    }
+    .spotify-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
     }
 }
