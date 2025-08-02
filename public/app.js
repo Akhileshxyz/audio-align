@@ -1,12 +1,11 @@
 // public/app.js
 
-lass AudioAlign {
+class AudioAlign {
     constructor() {
-        this.API_BASE = '/api';
+        this.API_BASE = '/api'; // Use relative path for API calls
         this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312';
 
-        // --- THIS IS THE CRITICAL CHANGE ---
-        // Hardcode the exact URL of your GitHub Pages site.
+        // --- FINAL, HARDCODED REDIRECT URI ---
         // Replace 'YOUR_USERNAME' with your actual GitHub username.
         this.REDIRECT_URI = 'https://YOUR_USERNAME.github.io/audio-align/';
         // ------------------------------------
@@ -15,46 +14,29 @@ lass AudioAlign {
     }
 
     init() {
-        this.loginButton = document.getElementById('spotify-login');
-        this.startOverButton = document.getElementById('start-over-btn');
-        
-        this.loginButton.addEventListener('click', this.login.bind(this));
-        this.startOverButton.addEventListener('click', this.resetApp.bind(this));
-
+        document.getElementById('spotify-login').addEventListener('click', this.login.bind(this));
         this.checkForCallback();
         this.loadStoredProfile();
     }
 
     login() {
         const SCOPES = 'user-library-read playlist-read-private user-top-read';
-        
-        // This line is the only part that's different.
-        // It will show us the exact URL being used.
-        console.log("Generated Redirect URI:", this.REDIRECT_URI);
 
         const authUrl = `https://accounts.spotify.com/authorize?` +
             `client_id=${this.SPOTIFY_CLIENT_ID}&` +
             `response_type=code&` +
             `redirect_uri=${encodeURIComponent(this.REDIRECT_URI)}&` +
             `scope=${encodeURIComponent(SCOPES)}`;
-        
-        // We are commenting this out temporarily so you can copy the URI
-        window.location.href = authUrl; 
-        
-        // Alert the user with the URI to make it even easier
-        alert("COPY THIS URI from the next prompt and paste it into your Spotify Dashboard settings:\n\n" + this.REDIRECT_URI);
-        prompt("Press CTRL+C or CMD+C to copy this exact URI:", this.REDIRECT_URI);
 
-        // Once you have updated your spotify settings, uncomment the line below
-        // and push the changes again.
-        // window.location.href = authUrl;
+        // This line performs the redirect. It must be present and uncommented.
+        window.location.href = authUrl;
     }
 
     async checkForCallback() {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
+
         if (code) {
-            // Clean the URL
             window.history.replaceState({}, document.title, window.location.pathname);
             await this.processSpotifyCallback(code);
         }
@@ -63,33 +45,55 @@ lass AudioAlign {
     async processSpotifyCallback(code) {
         try {
             this.showLoading('Connecting to Spotify...');
-            const tokenResponse = await this.apiCall('/spotify-auth', { code });
+
+            const tokenResponse = await fetch(`${this.API_BASE}/spotify-auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+
+            if (!tokenResponse.ok) throw new Error('Token exchange failed');
             const { access_token } = await tokenResponse.json();
 
             this.showLoading('Fetching your music data...');
-            const musicResponse = await this.apiCall('/fetch-music', { accessToken: access_token });
-            const musicData = await musicResponse.json();
-            
-            if (!musicData.tracks || musicData.tracks.length === 0) {
-                this.showError("We couldn't find any liked songs in your Spotify library. Please like some songs and try again!");
-                return;
-            }
 
-            this.showLoading('Analyzing your musical taste with AI...');
-            const analysisResponse = await this.apiCall('/analyze-music', musicData);
+            const musicResponse = await fetch(`${this.API_BASE}/fetch-music`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accessToken: access_token })
+            });
+
+            if (!musicResponse.ok) throw new Error('Failed to fetch music data');
+            const musicData = await musicResponse.json();
+
+            this.showLoading('Analyzing your musical taste...');
+
+            const analysisResponse = await fetch(`${this.API_BASE}/analyze-music`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(musicData)
+            });
+
+            if (!analysisResponse.ok) throw new Error('Analysis failed');
             const { analysis } = await analysisResponse.json();
 
             this.showLoading('Getting personalized recommendations...');
-            const recsResponse = await this.apiCall('/get-recommendations', {
-                accessToken: access_token,
-                topArtists: musicData.topArtists,
-                audioFeatures: musicData.audioFeatures
+
+            const recsResponse = await fetch(`${this.API_BASE}/get-recommendations`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    accessToken: access_token,
+                    topArtists: musicData.topArtists,
+                    audioFeatures: musicData.audioFeatures
+                })
             });
-            const recommendationsData = recsResponse.ok ? await recsResponse.json() : null;
+
+            const recommendations = recsResponse.ok ? await recsResponse.json() : null;
 
             const profile = {
                 analysis,
-                recommendations: recommendationsData?.recommendations || [],
+                recommendations: recommendations?.recommendations || [],
                 timestamp: Date.now()
             };
 
@@ -97,29 +101,15 @@ lass AudioAlign {
             this.displayResults(profile);
 
         } catch (error) {
-            console.error('Processing failed:', error);
-            this.showError(`An error occurred during analysis: ${error.message}. Please try again.`);
+            console.error('Process failed:', error);
+            this.showError(`Analysis failed: ${error.message}`);
         }
-    }
-    
-    async apiCall(endpoint, body) {
-        const response = await fetch(`${this.API_BASE}${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'API call failed');
-        }
-        return response;
     }
 
     loadStoredProfile() {
         const stored = localStorage.getItem('audioAlignProfile');
         if (stored) {
             const profile = JSON.parse(stored);
-            // Cache for 24 hours
             if (Date.now() - profile.timestamp < 24 * 60 * 60 * 1000) {
                 this.displayResults(profile);
             }
@@ -131,9 +121,7 @@ lass AudioAlign {
         document.getElementById('analysis-section').style.display = 'block';
         document.getElementById('loading').style.display = 'block';
         document.getElementById('results').style.display = 'none';
-        document.getElementById('error-section').style.display = 'none';
-        document.getElementById('start-over-btn').style.display = 'none';
-        document.getElementById('loading-message').textContent = message;
+        document.querySelector('#loading p').textContent = message;
     }
 
     displayResults(profile) {
@@ -141,23 +129,26 @@ lass AudioAlign {
         document.getElementById('analysis-section').style.display = 'block';
         document.getElementById('loading').style.display = 'none';
         document.getElementById('results').style.display = 'block';
-        document.getElementById('start-over-btn').style.display = 'inline-flex';
 
         document.getElementById('profile-results').innerHTML = `
-            <h2>🎵 Your Musical DNA</h2>
-            <div class="analysis-content">${profile.analysis.replace(/\n/g, '<br>')}</div>
+            <div class="profile-card">
+                <h2>🎵 Your Musical DNA</h2>
+                <div class="analysis-content">
+                    ${profile.analysis.replace(/\n/g, '<br>')}
+                </div>
+            </div>
         `;
 
         if (profile.recommendations && profile.recommendations.length > 0) {
             const recsHtml = profile.recommendations.map(track => `
                 <div class="recommendation-item">
-                    <img src="${track.album.images[2]?.url || 'https://placehold.co/64x64/191414/ffffff?text=?'}" alt="${track.album.name}">
-                    <div class="track-info">
-                        <strong>${track.name}</strong>
-                        <span>${track.artists[0].name}</span>
+                    <div>
+                        <strong>${track.name}</strong><br>
+                        <span style="opacity: 0.8;">${track.artists[0].name}</span>
                     </div>
                 </div>
             `).join('');
+
             document.getElementById('recommendations-list').innerHTML = recsHtml;
             document.getElementById('recommendations-section').style.display = 'block';
         } else {
@@ -170,18 +161,9 @@ lass AudioAlign {
         const errorSection = document.getElementById('error-section');
         errorSection.style.display = 'block';
         errorSection.textContent = message;
-        document.getElementById('start-over-btn').style.display = 'inline-flex';
-    }
-    
-    resetApp() {
-        localStorage.removeItem('audioAlignProfile');
-        document.getElementById('login-section').style.display = 'block';
-        document.getElementById('analysis-section').style.display = 'none';
-        document.getElementById('error-section').style.display = 'none';
     }
 }
 
-// Initialize the app once the DOM is fully loaded
 window.addEventListener('DOMContentLoaded', () => {
     new AudioAlign();
 });
