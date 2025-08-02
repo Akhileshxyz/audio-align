@@ -2,14 +2,10 @@
 
 class AudioAlign {
     constructor() {
-        this.API_BASE = '/api'; // Use relative path for API calls
+        this.API_BASE = '/api';
         this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312';
-
-        // --- FINAL, HARDCODED REDIRECT URI ---
-        // Replace 'YOUR_USERNAME' with your actual GitHub username.
+        // Make sure to replace 'YOUR_USERNAME' with your actual GitHub username
         this.REDIRECT_URI = 'https://akhileshxyz.github.io/audio-align/';
-        // ------------------------------------
-
         this.init();
     }
 
@@ -20,7 +16,9 @@ class AudioAlign {
     }
 
     login() {
-        const SCOPES = 'user-library-read playlist-read-private user-top-read';
+        // *** THIS IS THE UPDATED LINE ***
+        // We've added 'playlist-read-private' to get access to the user's playlists.
+        const SCOPES = 'user-library-read user-top-read playlist-read-private';
 
         const authUrl = `https://accounts.spotify.com/authorize?` +
             `client_id=${this.SPOTIFY_CLIENT_ID}&` +
@@ -28,7 +26,6 @@ class AudioAlign {
             `redirect_uri=${encodeURIComponent(this.REDIRECT_URI)}&` +
             `scope=${encodeURIComponent(SCOPES)}`;
 
-        // This line performs the redirect. It must be present and uncommented.
         window.location.href = authUrl;
     }
 
@@ -55,7 +52,7 @@ class AudioAlign {
             if (!tokenResponse.ok) throw new Error('Token exchange failed');
             const { access_token } = await tokenResponse.json();
 
-            this.showLoading('Fetching your music data...');
+            this.showLoading('Fetching your music library...');
 
             const musicResponse = await fetch(`${this.API_BASE}/fetch-music`, {
                 method: 'POST',
