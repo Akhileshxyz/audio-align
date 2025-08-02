@@ -36,7 +36,7 @@ class AudioAlign {
             `scope=${encodeURIComponent(SCOPES)}`;
         
         // We are commenting this out temporarily so you can copy the URI
-        // window.location.href = authUrl; 
+        window.location.href = authUrl; 
         
         // Alert the user with the URI to make it even easier
         alert("COPY THIS URI from the next prompt and paste it into your Spotify Dashboard settings:\n\n" + this.REDIRECT_URI);
