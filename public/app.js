@@ -24,12 +24,27 @@ class AudioAlign {
 
     login() {
         const SCOPES = 'user-library-read playlist-read-private user-top-read';
+        
+        // This line is the only part that's different.
+        // It will show us the exact URL being used.
+        console.log("Generated Redirect URI:", this.REDIRECT_URI);
+
         const authUrl = `https://accounts.spotify.com/authorize?` +
             `client_id=${this.SPOTIFY_CLIENT_ID}&` +
             `response_type=code&` +
             `redirect_uri=${encodeURIComponent(this.REDIRECT_URI)}&` +
             `scope=${encodeURIComponent(SCOPES)}`;
-        window.location.href = authUrl;
+        
+        // We are commenting this out temporarily so you can copy the URI
+        // window.location.href = authUrl; 
+        
+        // Alert the user with the URI to make it even easier
+        alert("COPY THIS URI from the next prompt and paste it into your Spotify Dashboard settings:\n\n" + this.REDIRECT_URI);
+        prompt("Press CTRL+C or CMD+C to copy this exact URI:", this.REDIRECT_URI);
+
+        // Once you have updated your spotify settings, uncomment the line below
+        // and push the changes again.
+        // window.location.href = authUrl;
     }
 
     async checkForCallback() {
