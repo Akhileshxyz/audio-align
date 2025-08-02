@@ -2,12 +2,11 @@
   "name": "audio-align",
   "version": "1.0.0",
   "description": "AI-powered Spotify music taste analyzer",
-  "main": "public/index.html",
+  "private": true,
   "scripts": {
-    "dev": "python -m http.server 8000 --directory public",
-    "build": "echo 'No build step needed for vanilla JS'"
+    "dev": "echo 'No dev script needed, just open public/index.html in a browser.'",
+    "build": "echo 'No build step needed.'"
   },
-  "keywords": ["spotify", "music", "ai", "analysis"],
   "author": "Your Name",
   "license": "MIT"
 }
