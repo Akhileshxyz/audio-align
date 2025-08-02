@@ -1,6 +1,14 @@
-node_modules/
-.env
-.env.local
+# .gitignore
+
+# Dependencies
+node_modules
+
+# Vercel
 .vercel
-*.log
+
+# Environment variables
+.env
+.env*.local
+
+# macOS
 .DS_Store
