@@ -1,13 +1,16 @@
 // public/app.js
 
-class AudioAlign {
+lass AudioAlign {
     constructor() {
-        // Use a relative path for API calls. This works for both local dev and Vercel deployment.
         this.API_BASE = '/api';
-        // This public client ID is safe to expose.
         this.SPOTIFY_CLIENT_ID = 'fd0e05deea6a41a793a62417b19d9312';
-        // The redirect URI should be the exact URL of your deployed frontend.
-        this.REDIRECT_URI = window.location.origin + window.location.pathname;
+
+        // --- THIS IS THE CRITICAL CHANGE ---
+        // Hardcode the exact URL of your GitHub Pages site.
+        // Replace 'YOUR_USERNAME' with your actual GitHub username.
+        this.REDIRECT_URI = 'https://YOUR_USERNAME.github.io/audio-align/';
+        // ------------------------------------
+
         this.init();
     }
 
