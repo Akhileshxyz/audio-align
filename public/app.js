@@ -7,7 +7,7 @@ class AudioAlign {
 
         // --- FINAL, HARDCODED REDIRECT URI ---
         // Replace 'YOUR_USERNAME' with your actual GitHub username.
-        this.REDIRECT_URI = 'https://YOUR_USERNAME.github.io/audio-align/';
+        this.REDIRECT_URI = 'https://akhileshxyz.github.io/audio-align/';
         // ------------------------------------
 
         this.init();
